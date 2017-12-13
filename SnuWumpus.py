@@ -26,8 +26,6 @@ with open('config.json', 'w') as f:
 if 'discord_token' not in config:
     sys.exit('Discord token must be supplied in configuration')
 
-ctx = discord.ext.commands.Context()
-
 reddit = praw.Reddit(client_id=config['reddit_clientid'],    #Log in to Reddit
                      client_secret=config['reddit_secret'], password=config['reddit_password'],  #Log in to Reddit
                      user_agent='FRC Discord Reddit Invitation Manager by Travis', username=config['reddit_username'])
@@ -42,7 +40,8 @@ async def inboxcheck():
             embed.add_field(name="Author", value=i.author)
             embed.add_field(name="Subject", value=i.subject)
             embed.add_field(name="Message body", value=i.body)
-            sendto = discord.ext.commands.ChannelConverter(ctx=ctx, argument=config['reddit_channel'])
+            sendto = discordbot.get_channel(config['reddit_channel'])
+            print(sendto)
             sendto.send(embed=embed)
 
 
@@ -50,7 +49,7 @@ async def inboxcheck():
 async def approve(author):
     for i in reddit.inbox.unread:
         if i.author == reddit.redditor(author):
-            invite = await ctx.guild.create_invite(xkcd=True, max_uses=1)
+            invite = await discordbot.get_guild(id=discordbot.guilds[0]).create_invite(xkcd=True, max_uses=1)
             i.author.message("Congratulations! You've been accepted into the FRC Discord server. Here's your invite: {}".format(invite))
             i.mark_read()
             break
