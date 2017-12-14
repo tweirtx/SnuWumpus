@@ -41,8 +41,8 @@ async def inboxcheck():
             embed.add_field(name="Subject", value=i.subject)
             embed.add_field(name="Message body", value=i.body)
             sendto = discordbot.get_channel(int(config['reddit_channel']))
-            sendto.send("Test")
-            sendto.send(embed=embed)
+            await sendto.send("Test")
+            await sendto.send(embed=embed)
 
 
 @discordbot.command
