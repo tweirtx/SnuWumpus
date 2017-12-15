@@ -46,7 +46,9 @@ async def inboxcheck():
 
 
 @discordbot.command()
-async def approve(ctx, author):
+async def approve(ctx, author="No author"):
+    if author == "No author":
+        await ctx.send("Please specify an author!")
     for i in reddit.inbox.unread():
         if str(i.author) == str(reddit.redditor(author)):
             invite = str(await discord.Client.get_channel(self=ctx.bot, id=int(config['invite_channel'])).create_invite(max_uses=1))
@@ -58,7 +60,9 @@ async def approve(ctx, author):
 
 
 @discordbot.command()
-async def deny(ctx, author):
+async def deny(ctx, author="No author"):
+    if author == "No author":
+        await ctx.send("Please specify an author!")
     for i in reddit.inbox.unread():
         if str(i.author) == str(reddit.redditor(author)):
             i.author.message(subject='FRC Discord invite', message="Sorry, but the moderation team has decided to deny"
@@ -69,7 +73,9 @@ async def deny(ctx, author):
 
 
 @discordbot.command()
-async def ignore(ctx, author):
+async def ignore(ctx, author="No author"):
+    if author == "No author":
+        await ctx.send("Please specify an author!")
     for i in reddit.inbox.unread():
         if str(i.author) == str(reddit.redditor(author)):
             i.mark_read()
