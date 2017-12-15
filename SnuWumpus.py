@@ -50,9 +50,30 @@ async def approve(ctx, author):
     for i in reddit.inbox.unread():
         if str(i.author) == str(reddit.redditor(author)):
             invite = str(await discord.Client.get_channel(self=ctx.bot, id=int(config['invite_channel'])).create_invite(max_uses=1))
-            i.author.message(subject='FRC Discord invite', message="Congratulations! You've been accepted into the FRC Discord server. Here's your invite: {}".format(invite))
+            i.author.message(subject='FRC Discord invite', message="Congratulations! You've been accepted into the FRC Discord "
+                                                                   "server. Here's your invite: {}".format(invite))
             i.mark_read()
             await ctx.send("Invite sent")
+            break
+
+
+@discordbot.command()
+async def deny(ctx, author):
+    for i in reddit.inbox.unread():
+        if str(i.author) == str(reddit.redditor(author)):
+            i.author.message(subject='FRC Discord invite', message="Sorry, but the moderation team has decided to deny"
+                                                                   " you at this time.")
+            i.mark_read()
+            await ctx.send("Message sent")
+            break
+
+
+@discordbot.command()
+async def ignore(ctx, author):
+    for i in reddit.inbox.unread():
+        if str(i.author) == str(reddit.redditor(author)):
+            i.mark_read()
+            await ctx.send("Ignored user")
             break
 
 
