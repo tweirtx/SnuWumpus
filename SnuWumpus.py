@@ -45,13 +45,13 @@ async def inboxcheck():
 
 
 @discordbot.command()
-async def approve(author):
+async def approve(ctx, author):
     for i in reddit.inbox.unread():
         if str(i.author) == str(reddit.redditor(author)):
-            invite = str(await discordbot.get_guild(id=discordbot.guilds[0]).create_invite(xkcd=True, max_uses=1))
-            i.author.message("Congratulations! You've been accepted into the FRC Discord server. Here's your invite: {}".format(invite))
+            invite = str(await ctx.guild.create_invite(xkcd=True, max_uses=1))
+            i.author.message(subject='FRC Discord invite', message="Congratulations! You've been accepted into the FRC Discord server. Here's your invite: {}".format(invite))
             i.mark_read()
-            await discordbot.get_channel(int(config['reddit_channel'])).send("Invite sent")
+            await ctx.send("Invite sent")
             break
 
 
