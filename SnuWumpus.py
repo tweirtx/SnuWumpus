@@ -12,7 +12,8 @@ config = {
     'reddit_secret': "Reddit client secret goes here",
     'reddit_clientid': "Reddit client ID goes here",
     'discord_token': "Put Discord API Token here.",
-    'reddit_channel': "Put the ID of the channel you want to send Reddit messages to here."
+    'reddit_channel': "Put the ID of the channel you want to send Reddit messages to here.",
+    'invite_channel': "Put the ID of the channel you want to invite users to here."
 }
 config_file = 'config.json'
 
@@ -48,7 +49,7 @@ async def inboxcheck():
 async def approve(ctx, author):
     for i in reddit.inbox.unread():
         if str(i.author) == str(reddit.redditor(author)):
-            invite = str(await ctx.guild.create_invite(xkcd=True, max_uses=1))
+            invite = str(await discord.Client.get_channel(self=ctx.bot, id=int(config['invite_channel'])).create_invite(max_uses=1))
             i.author.message(subject='FRC Discord invite', message="Congratulations! You've been accepted into the FRC Discord server. Here's your invite: {}".format(invite))
             i.mark_read()
             await ctx.send("Invite sent")
