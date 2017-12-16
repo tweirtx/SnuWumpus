@@ -84,8 +84,9 @@ async def ignore(ctx, author="No author"):
 
 
 async def timing():
-    await inboxcheck()
-    await asyncio.sleep(300)
+    while True:
+        await inboxcheck()
+        await asyncio.sleep(300)
 
 
 @discordbot.event
