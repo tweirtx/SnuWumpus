@@ -33,15 +33,18 @@ reddit = praw.Reddit(client_id=config['reddit_clientid'],    #Log in to Reddit
 
 discordbot = Bot(command_prefix=config['prefix'])
 
+ackmessages = []
+
 
 async def inboxcheck():
     for i in reddit.inbox.unread():
-        if i is not None:
+        if i is not None and i not in ackmessages:
             embed = discord.Embed(type='rich')
             embed.add_field(name="Author", value=i.author)
-            embed.add_field(name="Subject", value=i.subject)
-            embed.add_field(name="Message body", value=i.body)
+            embed.add_field(name="Subject", value=i.subject, inline=False)
+            embed.add_field(name="Message body", value=i.body, inline=False)
             sendto = discordbot.get_channel(int(config['reddit_channel']))
+            ackmessages.append(i)
             await sendto.send(embed=embed)
 
 
