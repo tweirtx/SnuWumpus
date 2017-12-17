@@ -2,7 +2,7 @@
 # 12/7/17
 # SnuWumpus
 
-import json, os.path, sys, praw, discord, asyncio
+import json, os.path, sys, praw, discord, asyncio, datetime
 from discord.ext.commands import Bot
 
 config = {
@@ -43,6 +43,8 @@ async def inboxcheck():
             embed.add_field(name="Author", value=i.author)
             embed.add_field(name="Subject", value=i.subject, inline=False)
             embed.add_field(name="Message body", value=i.body, inline=False)
+            creation_time = datetime.datetime.fromtimestamp(i.created_utc)
+            embed.add_field(name="Time", value="{} in UTC".format(creation_time))
             sendto = discordbot.get_channel(int(config['reddit_channel']))
             ackmessages.append(i)
             await sendto.send(embed=embed)
