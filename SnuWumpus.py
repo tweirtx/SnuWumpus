@@ -36,6 +36,12 @@ discordbot = Bot(command_prefix=config['prefix'])
 ackmessages = []
 
 
+@discordbot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, discord.ext.commands.MissingRequiredArgument):
+        await ctx.send('Author must be specified!')
+
+
 async def inboxcheck():
     for i in reddit.inbox.unread():
         if i is not None and i not in ackmessages:
@@ -45,17 +51,15 @@ async def inboxcheck():
             embed.add_field(name="Message body", value=i.body, inline=False)
             creation_time = datetime.datetime.fromtimestamp(i.created_utc)
             embed.add_field(name="Time", value="{} in UTC".format(creation_time))
-            sendto = discordbot.get_channel(int(config['reddit_channel']))
+            sendto = Bot.get_channel(self=discordbot, id=int(config['reddit_channel']))
             ackmessages.append(i)
             await sendto.send(embed=embed)
 
 
 @discordbot.command()
-async def approve(ctx, author="No author"):
-    if author == "No author":
-        await ctx.send("Please specify an author!")
+async def approve(ctx, author):
     for i in reddit.inbox.unread():
-        if str(i.author) == str(reddit.redditor(author)):
+        if str(i.author) == str(author):
             invite = str(await discord.Client.get_channel(self=ctx.bot, id=int(config['invite_channel'])).create_invite(max_uses=1))
             i.author.message(subject='FRC Discord invite', message="Congratulations! You've been accepted into the FRC Discord "
                                                                    "server. Here's your invite: {}".format(invite))
@@ -66,8 +70,6 @@ async def approve(ctx, author="No author"):
 
 @discordbot.command()
 async def deny(ctx, author="No author"):
-    if author == "No author":
-        await ctx.send("Please specify an author!")
     for i in reddit.inbox.unread():
         if str(i.author) == str(reddit.redditor(author)):
             i.author.message(subject='FRC Discord invite', message="Sorry, but the moderation team has decided to deny"
@@ -78,9 +80,7 @@ async def deny(ctx, author="No author"):
 
 
 @discordbot.command()
-async def ignore(ctx, author="No author"):
-    if author == "No author":
-        await ctx.send("Please specify an author!")
+async def ignore(ctx, author):
     for i in reddit.inbox.unread():
         if str(i.author) == str(reddit.redditor(author)):
             i.mark_read()
