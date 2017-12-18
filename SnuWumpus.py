@@ -6,7 +6,7 @@ import json, os.path, sys, praw, discord, asyncio, datetime
 from discord.ext.commands import Bot
 
 config = {
-    'prefix': '^', 'developers': [],
+    'prefix': '^',
     'reddit_username': "Put Reddit account username here.",
     'reddit_password': "Put the password for your Reddit account here",
     'reddit_secret': "Reddit client secret goes here",
