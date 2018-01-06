@@ -105,7 +105,7 @@ async def approve(ctx, author):
 
 
 @discordbot.command()
-async def deny(ctx, author):
+async def deny(ctx, author="No author"):
     for i in reddit.inbox.unread():
         if str(i.author) == str(reddit.redditor(author)):
             i.author.message(subject='FRC Discord invite', message="Sorry, but the moderation team has decided to deny"
