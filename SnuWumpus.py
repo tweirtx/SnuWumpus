@@ -13,7 +13,6 @@ config = {
     'reddit_clientid': "Reddit client ID goes here",
     'discord_token': "Put Discord API Token here.",
     'reddit_channel': "Put the ID of the channel you want to send Reddit messages to here.",
-    'submissionstream_channel': "Put the ID of the channel you want the subreddit scraper to send in here",
     'invite_channel': "Put the ID of the channel you want to invite users to here."
 }
 config_file = 'config.json'
@@ -36,19 +35,6 @@ discordbot = Bot(command_prefix=config['prefix'])
 
 ackmessages = []
 
-try:
-    submissionstreamlist = open('submissionstream.txt', mode='r')
-except FileNotFoundError:
-    open('submissionstream.txt', mode='x')
-    submissionstreamlist = open('submissionstream.txt', mode='a+')
-
-processedsubmissions = []
-
-for i in submissionstreamlist.readlines():
-    i = i.strip('\n')
-    processedsubmissions.append(i)
-submissionstreamlist.close()
-
 
 @discordbot.event
 async def on_command_error(ctx, error):
@@ -70,35 +56,13 @@ async def inboxcheck():
             await sendto.send(embed=embed)
 
 
-async def subredditscraper():
-    subreddit = reddit.subreddit('frcredditscrapertest')
-    for i in subreddit.stream.submissions():
-        if i not in processedsubmissions:
-            with open('submissionstream.txt', mode='a') as submissionstreamlist:
-                submissionstreamlist.write("\n{}".format(i.id))
-            e = discord.Embed(type='rich')
-            e.title = "New submission in /r/FRC"
-            e.add_field(name='Author', value=i.author)
-            e.add_field(name='Title', value=i.title)
-            if 1024 > len(i.selftext) > 0:
-                e.add_field(name='Body', value=i.selftext, inline=False)
-            if len(i.selftext) > 1024:
-                text = i.selftext
-                while len(text) != 0:
-                    e.add_field(name="Body", value=text[0:1023])
-                    text = text[1023:]
-            channel = discordbot.get_channel(id=int(config['submissionstream_channel']))
-            await channel.send(embed=e)
-            await channel.send("Link: {}".format(i.url))
-
-
 @discordbot.command()
 async def approve(ctx, author):
     for i in reddit.inbox.unread():
         if str(i.author) == str(author):
             invite = str(await discord.Client.get_channel(self=ctx.bot, id=int(config['invite_channel'])).create_invite(max_uses=1))
-            i.author.message(subject='FRC Discord invite', message="Congratulations! You've been accepted into the FRC Discord"
-                                                                   " server. Here's your invite: {}".format(invite))
+            i.author.message(subject='FRC Discord invite', message="Congratulations! You've been accepted into the FRC Discord "
+                                                                   "server. Here's your invite: {}".format(invite))
             i.mark_read()
             await ctx.send("Invite sent")
             break
@@ -127,7 +91,6 @@ async def ignore(ctx, author):
 async def timing():
     while True:
         await inboxcheck()
-        await subredditscraper()
         await asyncio.sleep(300)
 
 
