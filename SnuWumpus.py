@@ -87,6 +87,10 @@ async def ignore(ctx, author):
             await ctx.send("Ignored user")
             break
 
+@discordbot.command()
+async def ping(ctx):
+    await ctx.send("Pong! Online and responding!")
+
 
 async def timing():
     while True:
