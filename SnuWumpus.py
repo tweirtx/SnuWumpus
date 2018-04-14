@@ -116,6 +116,11 @@ async def deny(ctx, author):
 
 
 @discordbot.command()
+async def ping(ctx):
+    await ctx.send("Pong! Online and responding!")
+
+
+@discordbot.command()
 async def ignore(ctx, author):
     for i in reddit.inbox.unread():
         if str(i.author) == str(reddit.redditor(author)):
